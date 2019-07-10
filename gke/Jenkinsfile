@@ -30,34 +30,36 @@ pipeline {
     stages {
         stage("Build and test") {
 	    agent {
-    	    	  kubernetes {
-      		      cloud 'kubernetes'
-      		      label 'mavenpod'
-      		      yamlFile 'jenkins/maven-pod.yaml'
+    	    	kubernetes {
+      		    cloud 'kubernetes'
+      		    label 'mavenpod'
+      		    yamlFile 'gke/jenkins/maven-pod.yaml'
 		}
 	    }
 	    steps {
-	    	  container('maven') {
-		      // build
-	    	      sh "mvn clean package"
+	    	container('maven') {
+                    dir("gke") {
+		        // build
+	    	        sh "mvn clean package"
 
-		      // run tests
-		      sh "mvn verify"
-		      
-		      // archive the build context for kaniko
-		      sh "cp target/cloudbees-days-seattle-demo-*.jar $APP_JAR"
-		      sh "tar --exclude='./.git' -zcvf /tmp/$BUILD_CONTEXT ."
-		      sh "mv /tmp/$BUILD_CONTEXT ."
-		      step([$class: 'ClassicUploadStep', credentialsId: env.JENKINS_TEST_CRED_ID, bucket: "gs://${JENKINS_TEST_BUCKET}", pattern: env.BUILD_CONTEXT])    
-		  }
+		        // run tests
+		        sh "mvn verify"
+		        
+		        // archive the build context for kaniko
+		        sh "cp target/cloudbees-days-seattle-demo-*.jar $APP_JAR"
+		        sh "tar --exclude='./.git' -zcvf /tmp/$BUILD_CONTEXT ."
+		        sh "mv /tmp/$BUILD_CONTEXT ."
+		        step([$class: 'ClassicUploadStep', credentialsId: env.JENKINS_TEST_CRED_ID, bucket: "gs://${JENKINS_TEST_BUCKET}", pattern: env.BUILD_CONTEXT])
+                    }
+		}
 	    }
 	}
 	stage("Publish Image") {
             agent {
-    	    	  kubernetes {
-      		      cloud 'kubernetes'
-      		      label 'kaniko-pod'
-      		      yamlFile 'jenkins/kaniko-pod.yaml'
+    	    	kubernetes {
+      		    cloud 'kubernetes'
+      		    label 'kaniko-pod'
+      		    yamlFile 'gke/jenkins/kaniko-pod.yaml'
 		}
 	    }
 	    environment {
@@ -66,7 +68,7 @@ pipeline {
 	    steps {
 	        container(name: 'kaniko', shell: '/busybox/sh') {
 		    sh '''#!/busybox/sh
-		    /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --context="gs://${JENKINS_TEST_BUCKET}/${BUILD_CONTEXT}" --destination="${GCR_IMAGE}" --build-arg JAR_FILE="${APP_JAR}"
+		    /kaniko/executor -f `pwd`/gke/Dockerfile -c `pwd` --context="gs://${JENKINS_TEST_BUCKET}/${BUILD_CONTEXT}" --destination="${GCR_IMAGE}" --build-arg JAR_FILE="${APP_JAR}"
 		    '''
 		}
 	    }
@@ -76,35 +78,35 @@ pipeline {
     	        kubernetes {
       		    cloud 'kubernetes'
       		    label 'gke-deploy'
-		    yamlFile 'jenkins/gke-deploy-pod.yaml'
+		    yamlFile 'gke/jenkins/gke-deploy-pod.yaml'
 		}
             }
 	    steps{
 		container('gke-deploy') {
-		    sh "sed -i s#IMAGE#${GCR_IMAGE}#g kubernetes/manifest.yaml"
-                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT, clusterName: env.STAGING_CLUSTER, zone: env.STAGING_CLUSTER_ZONE, manifestPattern: 'kubernetes/manifest.yaml', credentialsId: env.JENKINS_TEST_CRED_ID, verifyDeployments: true])
+		    sh "sed -i s#IMAGE#${GCR_IMAGE}#g gke/kubernetes/manifest.yaml"
+                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT, clusterName: env.STAGING_CLUSTER, zone: env.STAGING_CLUSTER_ZONE, manifestPattern: 'gke/kubernetes/manifest.yaml', credentialsId: env.JENKINS_TEST_CRED_ID, verifyDeployments: true])
 		}
             }
 	}
         stage('Wait for SRE Approval') {
-         steps{
-           timeout(time:12, unit:'HOURS') {
-              input message:'Approve deployment?'
-           }
-         }
+            steps{
+                timeout(time:12, unit:'HOURS') {
+                    input message:'Approve deployment?'
+                }
+            }
         }
 	stage("Deploy to prod") {
             agent {
     	        kubernetes {
       		    cloud 'kubernetes'
       		    label 'gke-deploy'
-		    yamlFile 'jenkins/gke-deploy-pod.yaml'
+		    yamlFile 'gke/jenkins/gke-deploy-pod.yaml'
 		}
             }
 	    steps{
 		container('gke-deploy') {
-		    sh "sed -i s#IMAGE#${GCR_IMAGE}#g kubernetes/manifest.yaml"
-                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT, clusterName: env.PROD_CLUSTER, zone: env.PROD_CLUSTER_ZONE, manifestPattern: 'kubernetes/manifest.yaml', credentialsId: env.JENKINS_TEST_CRED_ID, verifyDeployments: true])
+		    sh "sed -i s#IMAGE#${GCR_IMAGE}#g gke/kubernetes/manifest.yaml"
+                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT, clusterName: env.PROD_CLUSTER, zone: env.PROD_CLUSTER_ZONE, manifestPattern: 'gke/kubernetes/manifest.yaml', credentialsId: env.JENKINS_TEST_CRED_ID, verifyDeployments: true])
 		}
             }
 	}
