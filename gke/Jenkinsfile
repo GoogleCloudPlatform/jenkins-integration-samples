@@ -45,9 +45,11 @@ pipeline {
 		        // run tests
 		        sh "mvn verify"
 		        
-		        // archive the build context for kaniko
+			// expose the generated artifact    
 		        sh "cp target/cloudbees-days-seattle-demo-*.jar $APP_JAR"
-		        sh "tar --exclude='./.git' -zcvf /tmp/$BUILD_CONTEXT ."
+
+		        // archive the build context for kaniko			    
+			sh "tar --exclude='./.git' -zcvf /tmp/$BUILD_CONTEXT ."
 		        sh "mv /tmp/$BUILD_CONTEXT ."
 		        step([$class: 'ClassicUploadStep', credentialsId: env.JENKINS_TEST_CRED_ID, bucket: "gs://${JENKINS_TEST_BUCKET}", pattern: env.BUILD_CONTEXT])
                     }
