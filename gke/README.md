@@ -30,7 +30,7 @@ This project demonstrates the following:
 
 
 # Setup steps
-The follow describes the setup process for this project.
+The following describes the setup process for this project.
 
 1. Install Jenkins on GKE using the stable/jenkins helm chart: [Jenkins On GKE Tutorial](https://cloud.google.com/solutions/jenkins-on-kubernetes-engine-tutorial)
 
