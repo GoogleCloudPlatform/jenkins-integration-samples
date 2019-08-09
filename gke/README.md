@@ -61,9 +61,9 @@ The following describes the setup process for this project:
    1. Add each environment variable as a key-value pair.
 
 1. Add GCP SA JSON key to secret store for kaniko:
-```bash
-kubectl create secret generic kaniko-secret --from-file=<path to kaniko-secret.json>
-```
+    ```bash
+    kubectl create secret generic kaniko-secret --from-file=<path to kaniko-secret.json>
+    ```
 
 1. Create a new Multibranch Pipeline Jenkins project pointed at this repository:
    [Jenkins Multibranch Pipeline Tutorial](
