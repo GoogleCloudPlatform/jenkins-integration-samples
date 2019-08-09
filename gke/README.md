@@ -36,6 +36,11 @@ The following describes the setup process for this project.
 
 1. Install and configure the GKE plugin: [Jenkins GKE Docs](https://github.com/jenkinsci/google-kubernetes-engine-plugin/blob/develop/docs/Home.md)
 
+1. Add the environment variables `JENKINS_TEST_PROJECT_ID`, `JENKINS_TEST_CRED_ID` and `JENKINS_TEST_BUCKET` to the Jenkins master configuration. 
+   1. Go to **Manage Jenkins** > **Configure System**.
+   1. Then under **Global Properties** check "Environment variables".
+   1. Add each environment variable as a key-value pair.
+
 1. Add GCP SA JSON key to secret store for kaniko:
 `kubectl create secret generic kaniko-secret --from-file=<path to kaniko-secret.json>`
 
