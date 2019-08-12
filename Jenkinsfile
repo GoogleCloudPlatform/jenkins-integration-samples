@@ -1,0 +1,116 @@
+/*
+ * Copyright 2019 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+pipeline {
+    agent none
+
+    environment {
+        BUILD_CONTEXT = "build-context-${BUILD_ID}.tar.gz"
+	PROJECT = "${JENKINS_TEST_PROJECT}"
+	GCR_IMAGE = "gcr.io/${PROJECT}/cloudbees-day-seattle-demo:${BUILD_ID}"
+	APP_JAR = "cloudbees-day-seattle-demo.jar"
+	STAGING_CLUSTER = "staging"
+	STAGING_CLUSTER_ZONE = "us-central1-c"
+	PROD_CLUSTER = "prod"
+	PROD_CLUSTER_ZONE = "us-central1-c"
+    }
+
+    stages {
+        stage("Build and test") {
+	    agent {
+    	    	kubernetes {
+      		    cloud 'kubernetes'
+      		    label 'mavenpod'
+      		    yamlFile 'gke/jenkins/maven-pod.yaml'
+		}
+	    }
+	    steps {
+	    	container('maven') {
+                    dir("gke") {
+		        // build
+	    	        sh "mvn clean package"
+
+		        // run tests
+		        sh "mvn verify"
+		        
+			// expose the generated artifact    
+		        sh "cp target/cloudbees-days-seattle-demo-*.jar $APP_JAR"
+
+		        // archive the build context for kaniko			    
+			sh "tar --exclude='./.git' -zcvf /tmp/$BUILD_CONTEXT ."
+		        sh "mv /tmp/$BUILD_CONTEXT ."
+		        step([$class: 'ClassicUploadStep', credentialsId: env.JENKINS_TEST_CRED_ID, bucket: "gs://${JENKINS_TEST_BUCKET}", pattern: env.BUILD_CONTEXT])
+                    }
+		}
+	    }
+	}
+	stage("Publish Image") {
+            agent {
+    	    	kubernetes {
+      		    cloud 'kubernetes'
+      		    label 'kaniko-pod'
+      		    yamlFile 'gke/jenkins/kaniko-pod.yaml'
+		}
+	    }
+	    environment {
+                PATH = "/busybox:/kaniko:$PATH"
+      	    }
+	    steps {
+	        container(name: 'kaniko', shell: '/busybox/sh') {
+		    sh '''#!/busybox/sh
+		    /kaniko/executor -f `pwd`/gke/Dockerfile -c `pwd` --context="gs://${JENKINS_TEST_BUCKET}/${BUILD_CONTEXT}" --destination="${GCR_IMAGE}" --build-arg JAR_FILE="${APP_JAR}"
+		    '''
+		}
+	    }
+	}
+	stage("Deploy to staging") {
+            agent {
+    	        kubernetes {
+      		    cloud 'kubernetes'
+      		    label 'gke-deploy'
+		    yamlFile 'gke/jenkins/gke-deploy-pod.yaml'
+		}
+            }
+	    steps{
+		container('gke-deploy') {
+		    sh "sed -i s#IMAGE#${GCR_IMAGE}#g gke/kubernetes/manifest.yaml"
+                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT, clusterName: env.STAGING_CLUSTER, zone: env.STAGING_CLUSTER_ZONE, manifestPattern: 'gke/kubernetes/manifest.yaml', credentialsId: env.JENKINS_TEST_CRED_ID, verifyDeployments: true])
+		}
+            }
+	}
+        stage('Wait for SRE Approval') {
+            steps{
+                timeout(time:12, unit:'HOURS') {
+                    input message:'Approve deployment?'
+                }
+            }
+        }
+	stage("Deploy to prod") {
+            agent {
+    	        kubernetes {
+      		    cloud 'kubernetes'
+      		    label 'gke-deploy'
+		    yamlFile 'gke/jenkins/gke-deploy-pod.yaml'
+		}
+            }
+	    steps{
+		container('gke-deploy') {
+		    sh "sed -i s#IMAGE#${GCR_IMAGE}#g gke/kubernetes/manifest.yaml"
+                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT, clusterName: env.PROD_CLUSTER, zone: env.PROD_CLUSTER_ZONE, manifestPattern: 'gke/kubernetes/manifest.yaml', credentialsId: env.JENKINS_TEST_CRED_ID, verifyDeployments: true])
+		}
+            }
+	}
+    }
+}
