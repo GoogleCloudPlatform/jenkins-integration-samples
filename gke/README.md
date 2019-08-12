@@ -14,30 +14,58 @@
 
 # GKE Sample Project
 
-This is an example project illustrating best practices for running Jenkins on GCP leveraging integrations published and officially supported by [GCP](https://cloud.google.com/). It highlights running [Jenkins](https://jenkins.io/) running in [GKE](https://cloud.google.com/kubernetes-engine/) using the [Kubernetes Plugin](https://github.com/jenkinsci/kubernetes-plugin) and utilizing a suite of GCP officially supported Jenkins plugins: ([GCS](https://github.com/jenkinsci/google-storage-plugin), [OAuth](https://github.com/jenkinsci/google-oauth-plugin), [GKE](https://github.com/jenkinsci/google-kubernetes-engine-plugin)) It demonstrates a real world use-case by building and testing a SpringBoot web application, building a container using Kaniko, publishing that container to GCR, and finally deploying the application to both staging and production environments in GKE.
+This is an example project illustrating best practices for running Jenkins on GCP leveraging
+integrations published and officially supported by [GCP](https://cloud.google.com/). It highlights
+running [Jenkins](https://jenkins.io/) running in [GKE](https://cloud.google.com/kubernetes-engine/)
+using the [Kubernetes Plugin](https://github.com/jenkinsci/kubernetes-plugin) and utilizing a suite
+of GCP officially supported Jenkins plugins: 
+([GCS](https://github.com/jenkinsci/google-storage-plugin),
+[OAuth](https://github.com/jenkinsci/google-oauth-plugin),
+[GKE](https://github.com/jenkinsci/google-kubernetes-engine-plugin)). It demonstrates a real world
+use-case by building and testing a SpringBoot web application, building a container using Kaniko,
+publishing that container to GCR, and finally deploying the application to both staging and
+production environments in GKE.
 
 
 This project demonstrates the following:
 
-* Jenkins running in GKE using the [Kubernetes Plugin](https://github.com/jenkinsci/kubernetes-plugin)
+* Jenkins running in GKE using the
+  [Kubernetes Plugin](https://github.com/jenkinsci/kubernetes-plugin).
 
-* Utilizing GCP officially supported Jenkins plugins: ([GCS](https://github.com/jenkinsci/google-storage-plugin), [OAuth](https://github.com/jenkinsci/google-oauth-plugin), [GKE](https://github.com/jenkinsci/google-kubernetes-engine-plugin))
+* Utilizing GCP officially supported Jenkins plugins:
+  ([GCS](https://github.com/jenkinsci/google-storage-plugin),
+  [OAuth](https://github.com/jenkinsci/google-oauth-plugin),
+  [GKE](https://github.com/jenkinsci/google-kubernetes-engine-plugin)).
 
-* Demonstrates best practices with real world use-case
-  * Builds and tests [SpringBoot](https://spring.io/guides/gs/spring-boot/) Application
-  * Publishes container image to [GCR](https://cloud.google.com/container-registry/) using [Kaniko](https://github.com/GoogleContainerTools/kaniko)
-  * Uses the [Jenkins GKE]((https://github.com/jenkinsci/google-kubernetes-engine-plugin)) plugin to deploy to multiple clusters in [GKE](https://cloud.google.com/kubernetes-engine/)
+* Demonstrates best practices with real world use-case:
+  * Builds and tests [SpringBoot](https://spring.io/guides/gs/spring-boot/) Application.
+  * Publishes container image to [GCR](https://cloud.google.com/container-registry/) using
+    [Kaniko](https://github.com/GoogleContainerTools/kaniko).
+  * Uses the [Jenkins GKE]((https://github.com/jenkinsci/google-kubernetes-engine-plugin)) plugin to
+    deploy to multiple clusters in [GKE](https://cloud.google.com/kubernetes-engine/).
 
 
 # Setup steps
-The following describes the setup process for this project.
+The following describes the setup process for this project:
 
-1. Install Jenkins on GKE using the stable/jenkins helm chart: [Jenkins On GKE Tutorial](https://cloud.google.com/solutions/jenkins-on-kubernetes-engine-tutorial)
+1. Install Jenkins on GKE using the stable/jenkins helm chart: [Jenkins On GKE Tutorial](
+   https://cloud.google.com/solutions/jenkins-on-kubernetes-engine-tutorial).
 
-1. Install and configure the GKE plugin: [Jenkins GKE Docs](https://github.com/jenkinsci/google-kubernetes-engine-plugin/blob/develop/docs/Home.md)
+1. Install and configure the GKE plugin: [Jenkins GKE Docs](
+   https://github.com/jenkinsci/google-kubernetes-engine-plugin/blob/develop/docs/Home.md).
+
+1. Add the environment variables `JENKINS_TEST_PROJECT_ID`, `JENKINS_TEST_CRED_ID` and
+   `JENKINS_TEST_BUCKET` to the Jenkins master configuration.
+   1. Go to **Manage Jenkins** > **Configure System**.
+   1. Then under **Global Properties** check "Environment variables".
+   1. Add each environment variable as a key-value pair.
 
 1. Add GCP SA JSON key to secret store for kaniko:
-`kubectl create secret generic kaniko-secret --from-file=<path to kaniko-secret.json>`
+    ```bash
+    kubectl create secret generic kaniko-secret --from-file=<path to kaniko-secret.json>
+    ```
 
-1. Create a new Multibranch Pipeline Jenkins project pointed at this repository: [Jenkins Multibranch Pipeline Tutorial](https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/)
+1. Create a new Multibranch Pipeline Jenkins project pointed at this repository:
+   [Jenkins Multibranch Pipeline Tutorial](
+   https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/).
 

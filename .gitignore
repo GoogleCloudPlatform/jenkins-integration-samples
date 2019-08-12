@@ -46,3 +46,7 @@ flycheck_*.el
 
 # network security
 /network-security.data
+
+# IntelliJ IDEA
+.idea/**
+*.iml
