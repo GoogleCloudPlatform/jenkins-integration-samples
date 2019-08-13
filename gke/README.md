@@ -51,8 +51,36 @@ The following describes the setup process for this project:
 1. Install Jenkins on GKE using the stable/jenkins helm chart: [Jenkins On GKE Tutorial](
    https://cloud.google.com/solutions/jenkins-on-kubernetes-engine-tutorial).
 
-1. Install and configure the GKE plugin: [Jenkins GKE Docs](
-   https://github.com/jenkinsci/google-kubernetes-engine-plugin/blob/develop/docs/Home.md).
+1. Install and configure the following plugins:
+   1. GKE plugin: [Jenkins GKE Docs](https://github.com/jenkinsci/google-kubernetes-engine-plugin/blob/develop/docs/Home.md).
+   1. GCS plugin: [Jenkins GCS Docs](https://github.com/jenkinsci/google-storage-plugin/blob/develop/README.md).
+   1. Global Variable String Parameter plugin: [Jenkins Global Var Docs](https://wiki.jenkins.io/display/JENKINS/Global+Variable+String+Parameter+Plugin).
+   1. Blue Ocean: [Blue Ocean Docs](https://jenkins.io/doc/book/blueocean/getting-started/#on-an-existing-jenkins-instance).
+
+1. Create a GCS bucket to upload your test work, e.g. 'projectname-jenkins-test-bucket'
+
+1. Create GCP service account that can push objects to your bucket and containers to your registry:
+   ```bash
+    export PROJECT=YOURGOOGLEPROJECTNAME
+    export SA=kaniko-role
+    gcloud iam service-accounts create $SA
+    export SA_EMAIL=$SA@$PROJECT.iam.gserviceaccount.com
+    gcloud projects add-iam-policy-binding $PROJECT \
+    --member serviceAccount:$SA_EMAIL \
+    --role ‘roles/containeranalysis.admin’
+    gcloud projects add-iam-policy-binding $PROJECT \
+    --member serviceAccount:$SA_EMAIL \
+    --role ‘roles/storage.objectAdmin'
+    gcloud iam service-accounts keys create ./kaniko.json --iam-account $SA_EMAIL
+    ```
+
+1. Add the new credential to your jenkins project:
+   1. If using cloud shell, click the 3 vertical dots and Download file, then enter "jenkins-gke-key.json".
+   1. In Jenkins, click the Credentials button on the left side of the screen. Then click System.
+   1. Click Global credentials then Add credentials on the left.
+   1. In the Kind dropdown, select Google Service Account from private key.
+   1. Enter the name 'kaniko' then select your JSON key that was created in the preceding steps.
+   1. Click OK.
 
 1. Add the environment variables `JENKINS_TEST_PROJECT_ID`, `JENKINS_TEST_CRED_ID` and
    `JENKINS_TEST_BUCKET` to the Jenkins master configuration.
@@ -62,10 +90,21 @@ The following describes the setup process for this project:
 
 1. Add GCP SA JSON key to secret store for kaniko:
     ```bash
-    kubectl create secret generic kaniko-secret --from-file=<path to kaniko-secret.json>
+    kubectl create secret generic kaniko-secret --from-file=./kaniko.json
     ```
 
 1. Create a new Multibranch Pipeline Jenkins project pointed at this repository:
+   1. In Jenkins click on 'Open Bluen Ocean
+   1. Click 'New Pipeline'
+   1. In the upper right hand corner select 'Classic Item Creation'
+   1. Enter 'jenkins-integration-sample' for the name and select 'Pipeline' as the project type
+   1. Scroll down to the 'Pipeline' configuration and select 'Pipeline script from SCM'
+   1. Select SCM as 'git'
+   1. Give the following repository URL: https://github.com/GoogleCloudPlatform/jenkins-integration-samples.git
+   1. Set the 'Script Path' to 'gke/Jenkinsfile'
+   1. Save
+
+Now you have a fully configured pipeline build!
    [Jenkins Multibranch Pipeline Tutorial](
    https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/).
 
