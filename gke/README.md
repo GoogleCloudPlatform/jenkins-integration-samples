@@ -105,6 +105,4 @@ The following describes the setup process for this project:
    1. Save
 
 Now you have a fully configured pipeline build!
-   [Jenkins Multibranch Pipeline Tutorial](
-   https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/).
 
