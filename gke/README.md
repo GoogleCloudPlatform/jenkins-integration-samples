@@ -54,6 +54,7 @@ The following describes the setup process for this project:
 1. Install and configure the following plugins:
    1. GKE plugin: [Jenkins GKE Docs](https://github.com/jenkinsci/google-kubernetes-engine-plugin/blob/develop/docs/Home.md).
    1. GCS plugin: [Jenkins GCS Docs](https://github.com/jenkinsci/google-storage-plugin/blob/develop/README.md).
+   1. OAuth plugin: [Jenkins OAuth Docs](https://github.com/jenkinsci/google-oauth-plugin/blob/develop/README.md).
 
 1. Create a GCS bucket to upload your test work, e.g. 'projectname-jenkins-test-bucket'
 
