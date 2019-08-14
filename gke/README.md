@@ -54,8 +54,6 @@ The following describes the setup process for this project:
 1. Install and configure the following plugins:
    1. GKE plugin: [Jenkins GKE Docs](https://github.com/jenkinsci/google-kubernetes-engine-plugin/blob/develop/docs/Home.md).
    1. GCS plugin: [Jenkins GCS Docs](https://github.com/jenkinsci/google-storage-plugin/blob/develop/README.md).
-   1. Global Variable String Parameter plugin: [Jenkins Global Var Docs](https://wiki.jenkins.io/display/JENKINS/Global+Variable+String+Parameter+Plugin).
-   1. Blue Ocean: [Blue Ocean Docs](https://jenkins.io/doc/book/blueocean/getting-started/#on-an-existing-jenkins-instance).
 
 1. Create a GCS bucket to upload your test work, e.g. 'projectname-jenkins-test-bucket'
 
@@ -71,7 +69,7 @@ The following describes the setup process for this project:
     gcloud projects add-iam-policy-binding $PROJECT \
     --member serviceAccount:$SA_EMAIL \
     --role ‘roles/storage.objectAdmin'
-    gcloud iam service-accounts keys create ./kaniko.json --iam-account $SA_EMAIL
+    gcloud iam service-accounts keys create ./kaniko-secret.json --iam-account $SA_EMAIL
     ```
 
 1. Add the new credential to your jenkins project:
@@ -90,13 +88,11 @@ The following describes the setup process for this project:
 
 1. Add GCP SA JSON key to secret store for kaniko:
     ```bash
-    kubectl create secret generic kaniko-secret --from-file=./kaniko.json
+    kubectl create secret generic kaniko-secret --from-file=./kaniko-secret.json
     ```
 
 1. Create a new Multibranch Pipeline Jenkins project pointed at this repository:
-   1. In Jenkins click on 'Open Bluen Ocean
-   1. Click 'New Pipeline'
-   1. In the upper right hand corner select 'Classic Item Creation'
+   1. In Jenkins click on 'New Item'
    1. Enter 'jenkins-integration-sample' for the name and select 'Pipeline' as the project type
    1. Scroll down to the 'Pipeline' configuration and select 'Pipeline script from SCM'
    1. Select SCM as 'git'
