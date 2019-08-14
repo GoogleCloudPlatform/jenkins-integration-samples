@@ -73,14 +73,6 @@ The following describes the setup process for this project:
     gcloud iam service-accounts keys create ./kaniko-secret.json --iam-account $SA_EMAIL
     ```
 
-1. Add the new credential to your jenkins project:
-   1. If using cloud shell, click the 3 vertical dots and Download file, then enter "jenkins-gke-key.json".
-   1. In Jenkins, click the Credentials button on the left side of the screen. Then click System.
-   1. Click Global credentials then Add credentials on the left.
-   1. In the Kind dropdown, select Google Service Account from private key.
-   1. Enter the name 'kaniko' then select your JSON key that was created in the preceding steps.
-   1. Click OK.
-
 1. Add the environment variables `JENKINS_TEST_PROJECT_ID`, `JENKINS_TEST_CRED_ID` and
    `JENKINS_TEST_BUCKET` to the Jenkins master configuration.
    1. Go to **Manage Jenkins** > **Configure System**.
