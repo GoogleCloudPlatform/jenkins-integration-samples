@@ -14,8 +14,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.google</groupId>
-    <artifactId>cloudbees-days-seattle-demo</artifactId>
-    <version>0.0.1</version>
+    <artifactId>jenkins-integration-samples-gke</artifactId>
+    <version>0.0.2</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
