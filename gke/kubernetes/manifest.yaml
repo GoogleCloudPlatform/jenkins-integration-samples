@@ -15,19 +15,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cloudbees-day-seattle-demo
+  name: jenkins-integration-samples-gke
 spec:
   selector:
     matchLabels:
-      app: cloudbees-day-seattle-demo
+      app: jenkins-integration-samples-gke
   replicas: 2
   template:
     metadata:
       labels:
-        app: cloudbees-day-seattle-demo
+        app: jenkins-integration-samples-gke
     spec:
       containers:
-      - name: cloudbees-day-seattle-demo
+      - name: jenkins-integration-samples-gke
         image: IMAGE
         ports:
         - containerPort: 80

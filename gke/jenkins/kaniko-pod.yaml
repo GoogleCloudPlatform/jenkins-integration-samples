@@ -33,4 +33,4 @@ spec:
   volumes:
   - name: kaniko-secret
     secret:
-      secretName: kaniko-secret
+      secretName: jenkins-int-samples-kaniko-secret
