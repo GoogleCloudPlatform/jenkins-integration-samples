@@ -28,7 +28,7 @@ The Google Kubernetes Engine (GKE) Plugin allows you to deploy build artifacts t
 
 *  [OAuth](https://github.com/jenkinsci/google-oauth-plugin)
 
-This plugin implements the OAuth Credentials interfaces to surface Google Service Account credentials to Jenkins.
+This plugin implements the OAuth Credentials interfaces to surface Google Service Account credentials to Jenkins. 
 
 *  [GCS](https://github.com/jenkinsci/google-storage-plugin)
 
