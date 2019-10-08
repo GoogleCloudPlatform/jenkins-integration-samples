@@ -45,6 +45,7 @@ pipeline {
 
 		        // run tests
 		        sh "mvn verify"
+				sh "echo test"
 		        
 			// bundle the generated artifact    
 		        sh "cp target/${APP_NAME}-*.jar $APP_JAR"
