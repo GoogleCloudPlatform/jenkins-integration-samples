@@ -66,10 +66,10 @@ The following describes the setup process for this project:
     export SA_EMAIL=$SA@$PROJECT.iam.gserviceaccount.com
     gcloud projects add-iam-policy-binding $PROJECT \
     --member serviceAccount:$SA_EMAIL \
-    --role ‘roles/containeranalysis.admin’
+    --role 'roles/containeranalysis.admin'
     gcloud projects add-iam-policy-binding $PROJECT \
     --member serviceAccount:$SA_EMAIL \
-    --role ‘roles/storage.objectAdmin'
+    --role 'roles/storage.objectAdmin'
     gcloud iam service-accounts keys create ./kaniko-secret.json --iam-account $SA_EMAIL
     ```
 
