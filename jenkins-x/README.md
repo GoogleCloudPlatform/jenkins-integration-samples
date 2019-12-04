@@ -15,25 +15,28 @@
 # Jenkins X GCP Playbook
 
 This guide provides a "playbook" as defined within the [Google SRE Book](https://landing.google.com/sre/sre-book/chapters/introduction/)
-for installing [Jenkins X](https://jenkins-x.io/) `jx` on [GCP](https://cloud.google.com/)
+for installing [Jenkins X](https://jenkins-x.io/), (aka **jx**), on [GCP](https://cloud.google.com/)
 using recommended best practices. It adopts the [GitOps](https://www.cloudbees.com/gitops/what-is-gitops)
-approach, defining the underlying GCP IaaS infrastructure with configuration as
-code using [Terraform](https://www.terraform.io/), a tool which has become
-an industry standard for defining and deploying IaaS instracture. It leverages
-[jx boot]([Jenkins X](https://jenkins-x.io/) on [GCP](https://cloud.google.com/)) to
-drive the installation of Jenkins X.
+approach, defining the underlying GCP [IaaS](https://en.wikipedia.org/wiki/Infrastructure_as_a_service) infrastructure
+with configuration as code using [Terraform](https://www.terraform.io/),
+a tool which has become an industry standard for defining and
+deploying IaaS instracture. Many projects and businesses have existing Terraform based IaaS provisioning
+workflows, the idea within this guide is to provide a resources which an be incorporated into these
+existing workflows. Finally, this guide leverages [jx boot]([Jenkins X](https://jenkins-x.io/) on [GCP](https://cloud.google.com/))
+to drive the jx installation process.
 
 ## Catostrophic Recovery
 
-While jx boot does a good job of creating a GitOps approach post installation,
+While jx boot does a good job of creating a GitOps environment post installation,
 it still relies on a manual "wizard-like" workflow for the initial boostrapping.
-As manual workflows can be error prone, this playbook defines reproducable steps
-for bootstrapping in the case of catostrophic recovery. It utilizes automation
-where possible with Terraform and scripting, and provides well-defined copy/paste
-steps for any manual steps. This document also attempts to assuage current pain points
-in the jx installation process, and thus serves as a living friction log for the project.
-The ultimate goal is to have these pain points addressed within jx, thus reducing the size
-of this playbook considerably.
+As manual workflows can be error prone, (especially during times of stress like outages),
+this playbook defines reproducable steps for bootstrapping in the case of
+catostrophic recovery. It utilizes automation where possible with Terraform as well
+as scripts which glue settings between Terraform and jx boot. Any remaining manual processes
+are enumerated with well-defined copy/paste steps. This document also attempts to assuage current
+pain points encountered during the jx installation process, and thus serves as a living
+friction log for the project. The ultimate goal is to have these pain points addressed
+within jx, thus reducing the size of this playbook considerably.
 
 ## Questions
 
@@ -44,8 +47,8 @@ Additionally, GCP engineers and users are available on the **#gcp-jenkins** Slac
 
 ## Steps
 
-This guide provides well defined steps for reproducibly installing jx onto a [GKE](https://cloud.google.com/kubernetes-engine/)
-cluster. This guide makes use of the following tools assuming each is installed
+This guide provides defined steps for reproducibly installing jx onto a [GKE](https://cloud.google.com/kubernetes-engine/)
+cluster. It makes use of the following CLI tools assuming each is installed
 and accessible on the $PATH:
 
 * [gcloud](https://cloud.google.com/sdk/)
@@ -61,7 +64,7 @@ If you don't already have one, [sign up for a Google account](https://accounts.g
 
 ### Clone This Repository
 
-The Terraform files and scripts can best be utilized by cloning this repository locally.
+The Terraform files and scripts can be utilized best by cloning this repository locally.
 Additionally, after use it can serve as the basis for your project's GitOps repository
 for bootstrapping your jx installation. **Always take care not to publish keys or other sensitive information to public repositories**.
 ```bash
@@ -98,10 +101,8 @@ A boostrap GCP service account (SA) is utilized throughout the rest of the
 installation process. This section ensures your GCP SA is provisioned
 with the necessary permissions. **Note**: this service account should only
 be used for IaaS resource provisioning and not for integration tests. Ideally
-this server account should be removed after installation.
-
-* If you don't already have GCP SA (service account) setup, provision a new one.
-
+this server account should be removed after installation. If you don't have an
+existing have GCP SA (service account) you want to use, provision a new one:
 ``` bash
 gcloud beta iam service-accounts create ${SA_NAME} \
     --display-name "${SA_NAME}"
@@ -113,10 +114,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 ### Bootstrap GCP IaaS resources
 
 Follow the instructions outlined within the [terraform/README.md](terraform/README.md)
-document for bootstrapping the required GCP IaaS resources. Ideally the Terraform
-resources should be incorporated into your project's existing IaaS provisioning
-CD workflows.
-
+document for bootstrapping the required GCP IaaS resources.
 
 ### Kubernetes Setup
 
