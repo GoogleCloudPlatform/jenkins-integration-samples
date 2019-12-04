@@ -64,9 +64,10 @@ If you don't already have one, [sign up for a Google account](https://accounts.g
 
 ### Clone This Repository
 
-The Terraform files and scripts can be utilized best by cloning this repository locally.
-Additionally, after use it can serve as the basis for your project's GitOps repository
-for bootstrapping your jx installation. **Always take care not to publish keys or other sensitive information to public repositories**.
+The Terraform resources and setup scripts provided by this guide can be utilized best
+by cloning this repository locally. Additionally, after use it can serve as the basis
+for your project's GitOps repository for bootstrapping your jx installation.
+**Always take care not to publish keys or other sensitive information to public repositories**.
 ```bash
 git clone https://github.com/GoogleCloudPlatform/jenkins-integration-samples.git
 cd jenkins-integration-samples/jenkins-x
