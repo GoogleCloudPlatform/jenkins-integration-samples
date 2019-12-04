@@ -22,8 +22,8 @@ with configuration as code using [Terraform](https://www.terraform.io/),
 a tool which has become an industry standard for defining and
 deploying IaaS instracture. Many projects and businesses have existing Terraform based IaaS provisioning
 workflows, the idea within this guide is to provide a resources which an be incorporated into these
-existing workflows. Finally, this guide leverages [jx boot]([Jenkins X](https://jenkins-x.io/) on [GCP](https://cloud.google.com/))
-to drive the jx installation process.
+existing workflows. Finally, this guide leverages [jx boot](https://jenkins-x.io/docs/getting-started/setup/boot/)
+on [GCP](https://cloud.google.com/) to drive the jx installation process.
 
 ## Catostrophic Recovery
 
@@ -81,16 +81,14 @@ installation environment variables utilized throughout this process.
 the [jenkins-x-env.sh][jenkins-x-env.sh] file by replacing each value
 labeled: "[FILL_ME_IN]" with an appropriate configuration value.
 
-2. Load the environment variables into the current session.
-
+2. Load the environment variables into the current session:
 ```bash
     source jenkins-x-env.sh
 ```
 
 ### Enable Required Services
 
-Enable the services required to install Jenkins X on GKE.
-
+Enable the services required to install Jenkins X on GKE:
 ```bash
 gcloud services enable storage-api.googleapis.com container.googleapis.com containerregistry.googleapis.com dns.googleapis.com cloudresourcemanager.googleapis.com
 ```
@@ -129,7 +127,7 @@ document for configuring and running jx boot to install jx.
 ### Cleanup
 
 Finally, for best security practices you'll want to destroy the service account used
-during this bootstrapping process, as it's no longer needed.
+during this bootstrapping process, as it's no longer needed:
 ```bash
 gcloud beta iam service-accounts delete ${SA_NAME}
 ```
