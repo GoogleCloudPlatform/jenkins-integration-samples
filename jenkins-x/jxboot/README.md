@@ -27,7 +27,7 @@ process can be found here: https://jenkins-x.io/docs/getting-started/setup/boot/
 
 ## Steps
 
-1. Clone the [jenkins-x-boot-config](https://github.com/jenkins-x/jenkins-x-boot-config)
+1. Clone the [jenkins-x-boot-config](https://github.com/jenkins-x/jenkins-x-boot-config) project.
 ```bash
 cd jenkins-x/jxboot
 git clone https://github.com/jenkins-x/jenkins-x-boot-config.git

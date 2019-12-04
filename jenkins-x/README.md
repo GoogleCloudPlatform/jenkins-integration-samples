@@ -120,7 +120,7 @@ document for bootstrapping the required GCP IaaS resources.
 Follow the instructions outlined within the [kubernetes/README.md](kubernetes/README.md)
 document for configuring the pre-requisites for running jx boot on your GKE cluster.
 
-### jx boot Setup
+### jx boot
 
 Follow the instructions outlined within the [jxboot/README.md](jxboot/README.md)
 document for configuring and running jx boot to install jx.
