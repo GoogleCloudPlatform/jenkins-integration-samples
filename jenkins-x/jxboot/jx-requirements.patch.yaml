@@ -1,0 +1,78 @@
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# A yaml patch file for patching the jx-requirements.yml file
+# used by jx boot. Built for use with the yaml-patch tool:
+# https://github.com/krishicks/yaml-patch
+
+- op: replace
+  path: /cluster/environmentGitOwner
+  value: ${GITHUB_ORG}
+- op: replace
+  path: /cluster/clusterName
+  value: ${TF_VAR_cluster_name}
+- op: replace
+  path: /cluster/project
+  value: ${PROJECT_ID}
+- op: replace
+  path: /cluster/zone
+  value: ${TF_VAR_cluster_zone}
+- op: replace
+  path: /ingress/domain
+  value: ${JX_DOMAIN}
+- op: replace
+  path: /ingress/externalDNS
+  value: true
+- op: add
+  path: /ingress/namespaceSubDomain
+  value: ${JX_SUBDOMAIN}.
+- op: add
+  path: /ingress/clusterIP
+  value: ${CLUSTER_IP} 
+- op: replace
+  path: /ingress/tls/enabled
+  value: true
+- op: replace
+  path: /ingress/tls/production
+  value: false
+- op: replace
+  path: /ingress/tls/email
+  value: ${CERT_EMAIL}
+- op: replace
+  path: /kaniko
+  value: true
+- op: replace
+  path: /storage/logs/enabled
+  value: true
+- op: replace
+  path: /storage/logs/url
+  value: gs://${TF_VAR_log_storage_bucket}/logs
+- op: replace
+  path: /storage/reports/enabled
+  value: true
+- op: replace
+  path: /storage/reports/url
+  value: gs://${TF_VAR_log_storage_bucket}/reports
+- op: replace
+  path: /storage/repository/enabled
+  value: true
+- op: replace
+  path: /storage/repository/url
+  value: gs://${TF_VAR_log_storage_bucket}/repository
+- op: add
+  path: /
+  value:
+    autoUpdate:
+      enabled: true
+      schedule: "0 0 23 1/1 * ? *"
