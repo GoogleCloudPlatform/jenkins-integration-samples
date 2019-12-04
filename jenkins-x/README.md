@@ -65,7 +65,7 @@ If you don't already have one, [sign up for a Google account](https://accounts.g
 ### Clone This Repository
 
 The Terraform resources and setup scripts provided by this guide can be utilized best
-by cloning this repository locally. Additionally, after use it can serve as the basis
+by cloning this repository locally. Additionally, post-installation, it can serve as the basis
 for your project's GitOps repository for bootstrapping your jx installation.
 **Always take care not to publish keys or other sensitive information to public repositories**.
 ```bash

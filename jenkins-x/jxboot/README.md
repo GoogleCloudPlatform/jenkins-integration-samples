@@ -18,19 +18,11 @@ This section outlines how to configure and run [jx boot](https://jenkins-x.io/do
 to install Jenkins X into your GKE cluster. This section assumes all
 required IaaS resources have been provisioned using the process outlined within the
 [terraform/README.md](../terraform/README.md) document. This section also
-assumes that the steps defined within the [helm/README.md](../helm/README.md) document
-have been followed. This section makes use of the
-following tools assuming each is installed and accessible on the $PATH:
-
-* [jx](https://jenkins-x.io/docs/getting-started/setup/install/)
-* [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [envsubst](https://linux.die.net/man/1/envsubst)
-* [yaml-patch](https://github.com/krishicks/yaml-patch#installing)
-
-It also assumes the environment variables outlined within the
+assumes that the steps defined within the [kubernetes/README.md](../kubernetes/README.md)
+document have been followed. It also assumes the environment variables outlined within the
 [../README.md](../README.md) document have been configured and loaded.
 
-Further reference information on jx boot and the Jenkins X install
+* Further reference information on jx boot and the Jenkins X install
 process can be found here: https://jenkins-x.io/docs/getting-started/setup/boot/
 
 ## Steps

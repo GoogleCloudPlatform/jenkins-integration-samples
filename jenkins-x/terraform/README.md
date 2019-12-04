@@ -15,47 +15,38 @@
 # Jenkins IaaS Bootstrapping with Terraform
 
 This section outlines how to bootstrap the GCP IaaS resources
-required for the the Jenkins X installation.
-
-This section makes use of the [Terraform](https://www.terraform.io/intro/index.html)
+required for the the Jenkins X installation. This section makes use of the [Terraform](https://www.terraform.io/intro/index.html)
 tool. Please ensure the Terraform CLI is installed prior to following these instructions.
-
-It also assumes the environment variables outlined within the
-[../README.md](../README.md) document have been configured and loaded.
-
+It also assumes the environment variables outlined within the [../README.md](../README.md)
+document have been configured and loaded.
 
 ## Steps
 
-1. Export the GCP SA key you'll be using for Terraform.
-
+1. Export the GCP SA key you'll be using for Terraform:
 ```bash
 gcloud iam service-accounts keys create ${GOOGLE_CLOUD_KEYFILE_JSON} \
     --iam-account ${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 ```
 
-2. Initialize the Terraform GCP provider.
-
+2. Initialize the Terraform GCP provider:
 ```bash
 cd jenkins-x/terraform/
 terraform init
 ```
 
 3. Generate the Terraform plan writing out the results to a file. Examine the contents of
-    the $TF_PLAN_FILE to verify correctness.
-
+    the $TF_PLAN_FILE to verify correctness:
 ```bash
 terraform plan -out ${TF_PLAN_FILE}
 ```
 
-4. Apply the Terraform plan.
-
+4. Apply the Terraform plan:
 ```bash
 terraform apply ${TF_PLAN_FILE}
 ```
 
 5. Retrieve the name servers from the newly created Cloud DNS managed zone, and
-    configure your domain to use them via your domain registrar's web interface.
-
+configure your domain to use them via your domain registrar's web interface:
 ```bash
 gcloud dns record-sets list --zone=${TF_VAR_cloud_dns_managed_zone_name} \
     | grep "NS" | tr -s ' ' | cut -d' ' -f4

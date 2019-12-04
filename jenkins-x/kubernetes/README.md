@@ -16,11 +16,10 @@
 
 This section outlines how to configure an existing GKE cluster
 for installation of Jenkins X. This section assumes all
-required IaaS resources have been provisioned using the process outlined within the
-[terraform/README.md](../terraform/README.md) document.
-
-It assumes the environment variables outlined within the
-[../README.md](../README.md) document have been configured and loaded.
+required IaaS resources have been provisioned using the process
+outlined within the [terraform/README.md](../terraform/README.md)
+document. It also assumes the environment variables outlined within
+the [../README.md](../README.md) document have been configured and loaded.
 
 ## Steps
 
