@@ -132,3 +132,19 @@ during this bootstrapping process, as it's no longer needed:
 ```bash
 gcloud beta iam service-accounts delete ${SA_NAME}
 ```
+
+### jx boot Tips & Tricks
+
+This section contains tips and tricks for navigating the jx installation process.
+
+#### If at first you don’t succeed, try again.
+
+* A common type of error encountered during the jx boot process:
+```bash
+error: waiting for vault service: service jx-vault-devops-eu-201 never became ready
+error: failed to interpret pipeline file jenkins-x.yml: failed to run '/bin/sh -c jx step boot vault --provider-values-dir ../../kubeProviders' command in directory 'systems/vault', output: ''
+```
+
+* Solution: Run the command again, often times errors like these are the result
+of provisioning timeouts not be properly calibrated.
+
