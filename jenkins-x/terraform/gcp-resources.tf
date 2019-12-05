@@ -102,10 +102,7 @@ resource "google_service_account_iam_binding" "service-account-role" {
 }
 
 
-/* TODO(craigdbarber): Add support for managed addresses. This
- * depends on changing the jx-requirements.yml to support clusterIP
- * need to add field to schema: https://github.com/jenkins-x/jx/blob/master/pkg/config/install_requirements.go
- * then add to external-dns/values.tmpl.yaml
+/* TODO(#14): Add support for managed addresses.
 
 variable "cluster_address_name" {
   type = string
